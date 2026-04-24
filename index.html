@@ -286,6 +286,55 @@
   .typing-dot:nth-child(3){ animation-delay: .3s; }
   @keyframes tdot { 0%,80%,100% { transform: translateY(0); opacity:.3; } 40% { transform: translateY(-3px); opacity:1; } }
 
+  /* "Generating image" shimmer label */
+  .gen-bubble { font-size: .85rem; font-weight: 500; }
+  .gen-shimmer {
+    background: linear-gradient(90deg,
+      currentColor 0%, currentColor 35%,
+      var(--accent) 50%,
+      currentColor 65%, currentColor 100%);
+    background-size: 220% 100%;
+    -webkit-background-clip: text; background-clip: text;
+    -webkit-text-fill-color: transparent; color: transparent;
+    animation: genShimmer 2.2s linear infinite;
+  }
+  @keyframes genShimmer { from { background-position: 200% 0; } to { background-position: -200% 0; } }
+  .gen-avatar { animation: genAvatarSpin 6s linear infinite, genPulse 1.6s ease-in-out infinite; }
+  @keyframes genAvatarSpin { to { transform: rotate(360deg); } }
+  @keyframes genPulse {
+    0%,100% { box-shadow: 0 0 0 0 rgba(var(--accent-rgb),.45); }
+    50%     { box-shadow: 0 0 0 6px rgba(var(--accent-rgb),0); }
+  }
+
+  /* Incognito visual cues */
+  html.incognito #pill {
+    box-shadow: 0 0 0 1px rgba(120, 130, 160, .35), 0 8px 28px -10px rgba(0,0,0,.55);
+  }
+  html.incognito #pill::before {
+    content: ""; position: absolute; inset: -1px; border-radius: inherit;
+    pointer-events: none; opacity: .65;
+    background: linear-gradient(120deg, rgba(120,130,160,.18), rgba(99,102,241,.10));
+    mix-blend-mode: screen;
+  }
+  #pill { position: relative; }
+  .incognito-badge {
+    display: inline-flex; align-items: center; gap: 4px;
+    font-size: 10px; font-weight: 600; letter-spacing: .08em;
+    padding: 2px 7px; border-radius: 9999px;
+    background: rgba(120,130,160,.18); color: inherit; opacity: .9;
+    text-transform: uppercase;
+  }
+  /* Toggle button "on" state in pill + mobile menu */
+  .btn-icon.is-on {
+    background: rgba(var(--accent-rgb), .18);
+    color: var(--accent);
+    opacity: 1;
+  }
+  .mm-row.is-on .mm-ico {
+    background: rgba(var(--accent-rgb), .28);
+  }
+  .mm-row.is-on { color: var(--accent); }
+
   /* Scrollbar */
   *::-webkit-scrollbar { width: 6px; height: 6px; }
   *::-webkit-scrollbar-track { background: transparent; }
@@ -770,6 +819,14 @@
         <svg id="iconMoon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
         <svg id="iconSun"  class="hidden" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
       </button>
+      <button id="incognitoBtn" class="btn-icon" data-incognito-btn title="Incognito (chats won't be saved)" aria-label="Toggle incognito">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M2 12c2 0 4-1 6-1s2 1 4 1 2-1 4-1 4 1 6 1"/>
+          <circle cx="7" cy="16" r="3"/>
+          <circle cx="17" cy="16" r="3"/>
+          <path d="M10 16h4"/>
+        </svg>
+      </button>
       <button id="clearBtn" class="btn-icon text-rose-500" title="Clear chat">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="m19 6-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
       </button>
@@ -854,6 +911,10 @@
       <button class="mm-row" id="mmTheme">
         <span class="mm-ico"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg></span>
         <span>Toggle theme</span>
+      </button>
+      <button class="mm-row" id="mmIncognito" data-incognito-btn>
+        <span class="mm-ico"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12c2 0 4-1 6-1s2 1 4 1 2-1 4-1 4 1 6 1"/><circle cx="7" cy="16" r="3"/><circle cx="17" cy="16" r="3"/><path d="M10 16h4"/></svg></span>
+        <span id="mmIncognitoLabel">Incognito mode</span>
       </button>
       <button class="mm-row" id="mmClear" style="color:#fb7185;">
         <span class="mm-ico" style="background:rgba(251,113,133,.16); color:#fb7185;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="m19 6-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg></span>
@@ -1133,12 +1194,147 @@ const SUGGESTIONS = [
   { icon: "✺", label: "Refactor this code to be more idiomatic" },
 ];
 
+/* ===========================================================
+   CUSTOM PROMPTS
+   -----------------------------------------------------------
+   When a user sends a message that matches one of the prompts
+   below (case-insensitive, extra spaces ignored), Glacier will
+   reply with a RANDOM image picked from that prompt's pool —
+   instead of calling the AI.
+
+   Each entry has:
+     - prompt : a string, OR an array of strings (aliases)
+     - images : an array of image sources, where each source
+                can be EITHER:
+                  • a Google Drive file ID, e.g. "1AbCdEf...xYz"
+                  • a full URL, e.g.
+                    "https://raw.githubusercontent.com/user/repo/main/pic.png"
+                Drive viewer URLs (drive.google.com/file/d/ID/view)
+                and GitHub blob URLs are auto-normalized too.
+     - caption: (optional) markdown text shown above the image
+
+   Example:
+     {
+       prompt: ["show me a cat", "cat please"],
+       images: [
+         "1AbCdEfGhIjKlMnOpQrStUvWxYz",
+         "https://raw.githubusercontent.com/me/pics/main/cat.png",
+       ],
+       caption: "Here's a cat for you:",
+     },
+   =========================================================== */
+const CUSTOM_PROMPTS = [
+  // Add your custom prompts here:
+     {
+       prompt: ["generate porn", "i want porn NOW"],
+       images: [
+         "1HRP-obzO5nOROWLFgp9fdbGsSQnwv6bM",
+         "1NEk3dXMdPSnq8jMUQmJo7hzEcOuXmczH",
+         "1Jd2riHWMvJUJas_Oyv4_JXkx0rnAMraJ",
+         "1-R16CnLmRIfQfaqblYXAhtR8orWNANZC",
+         "1b0yq4Nd8R1XojEqRw9KI0VJs4nP3hOnq",
+         "1Nhl0_GYGyD6PFmpOKcPWdKMq9cf7D7Fr",
+         "1ujCmjM9W25UAB7dDE6OAgi4qxzx4Zenh",
+         "1jT5kNxW_fxiHxgQuhknu5RKKeeNOie54",
+         "1nOB4h-jY3aDxvO0_F2FxXYUD8CTzwWX3",
+         "1jq0bpuqaaDgnR8dFtyKDvFDdB4VH5zGr",
+
+         
+       ],
+       caption: "Here's some porn for you:",
+     },
+     
+     
+     
+          {
+       prompt: ["show aira", "aira photo"],
+       images: [
+         "15HX8CbgD-7rWfBS-9yyeERza3xWUvT4j",
+         "1Vr_bEDrfOakaCSSXFKh0H9_p98au5ZQ1",
+       ],
+       caption: "Here's aira::",
+     },
+     
+     
+];
+
+function _driveThumb(id) {
+  // The /thumbnail endpoint is the most reliable way to embed a public Drive
+  // image inside an <img> tag — works without auth, no CORS, no quota popups.
+  return `https://drive.google.com/thumbnail?id=${id}&sz=w1920`;
+}
+
+function resolveImageSource(idOrUrl) {
+  const v = String(idOrUrl || "").trim();
+  if (!v) return "";
+  if (/^https?:\/\//i.test(v)) {
+    // GitHub blob URL → raw URL
+    const blob = v.match(/^https?:\/\/github\.com\/([^/]+)\/([^/]+)\/blob\/(.+)$/i);
+    if (blob) return `https://raw.githubusercontent.com/${blob[1]}/${blob[2]}/${blob[3]}`;
+    // Google Drive viewer URL → direct thumbnail
+    const gd1 = v.match(/drive\.google\.com\/file\/d\/([^/?#]+)/i);
+    if (gd1) return _driveThumb(gd1[1]);
+    if (/drive\.google\.com/i.test(v)) {
+      const gd2 = v.match(/[?&]id=([^&]+)/i);
+      if (gd2) return _driveThumb(gd2[1]);
+    }
+    // googleusercontent /d/ID style → swap to thumbnail
+    const guc = v.match(/lh\d\.googleusercontent\.com\/d\/([^/?#]+)/i);
+    if (guc) return _driveThumb(guc[1]);
+    return v;
+  }
+  // Treat anything else as a Google Drive file ID
+  return _driveThumb(v);
+}
+
+function normalizePrompt(s) {
+  return String(s || "").trim().toLowerCase().replace(/\s+/g, " ");
+}
+
+function findCustomPromptMatch(content) {
+  const target = normalizePrompt(content);
+  if (!target) return null;
+  for (const entry of CUSTOM_PROMPTS) {
+    const prompts = Array.isArray(entry.prompt) ? entry.prompt : [entry.prompt];
+    for (const p of prompts) {
+      if (normalizePrompt(p) === target) return entry;
+    }
+  }
+  return null;
+}
+
+function _strongRandomIndex(n) {
+  if (n <= 1) return 0;
+  if (window.crypto && window.crypto.getRandomValues) {
+    // Rejection-sample to avoid modulo bias
+    const limit = Math.floor(0xFFFFFFFF / n) * n;
+    const buf = new Uint32Array(1);
+    while (true) {
+      window.crypto.getRandomValues(buf);
+      if (buf[0] < limit) return buf[0] % n;
+    }
+  }
+  return Math.floor(Math.random() * n);
+}
+
+function pickRandomImage(entry) {
+  const pool = (entry.images || []).map(resolveImageSource).filter(Boolean);
+  if (!pool.length) return "";
+  const url = pool[_strongRandomIndex(pool.length)];
+  // Append a cache-buster so identical URLs displayed earlier don't get
+  // re-served from cache and so two runs in a row visually feel different.
+  const sep = url.includes("?") ? "&" : "?";
+  return `${url}${sep}_r=${Date.now().toString(36)}${Math.random().toString(36).slice(2,8)}`;
+}
+
 /* ----------------------- State ----------------------- */
 let state = load();
 let activeTab = "chat";
 let isTyping = false;
 let abortCtrl = null;
 let pendingAttachments = [];
+let generatingLabel = "";   // when set, the typing bubble shows this label + sparkle icon
+let incognitoMode = false;  // runtime-only — incognito always starts OFF on reload
 
 function load() {
   try {
@@ -1155,7 +1351,18 @@ function load() {
   return { settings: { ...DEFAULT_SETTINGS }, conversations: [], activeId: null };
 }
 function persist() {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  // Strip out any incognito conversations before writing to disk so nothing
+  // sent in incognito mode ever ends up in localStorage.
+  const safeConvos = state.conversations.filter(c => !c.incognito);
+  const safeActive = safeConvos.some(c => c.id === state.activeId)
+    ? state.activeId
+    : (safeConvos[0]?.id || null);
+  const snapshot = {
+    settings: state.settings,
+    conversations: safeConvos,
+    activeId: safeActive,
+  };
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(snapshot));
 }
 function uid(){ return Math.random().toString(36).slice(2,10) + Date.now().toString(36); }
 
@@ -1219,6 +1426,42 @@ function applyTheme() {
     b.classList.toggle("opacity-70", !active);
     b.style.background = active ? "rgba(127,127,127,.12)" : "transparent";
   });
+}
+
+/* ----------------------- Incognito mode ----------------------- */
+function applyIncognitoUI() {
+  document.documentElement.classList.toggle("incognito", incognitoMode);
+  document.querySelectorAll("[data-incognito-btn]").forEach(b => b.classList.toggle("is-on", incognitoMode));
+  const lbl = document.getElementById("mmIncognitoLabel");
+  if (lbl) lbl.textContent = incognitoMode ? "Incognito mode (on)" : "Incognito mode";
+  const pcBtn = document.getElementById("incognitoBtn");
+  if (pcBtn) pcBtn.title = incognitoMode ? "Incognito on — chats won't be saved" : "Incognito (chats won't be saved)";
+}
+
+function toggleIncognito() {
+  incognitoMode = !incognitoMode;
+  if (incognitoMode) {
+    // Start a fresh in-memory incognito conversation
+    const c = { id: uid(), title: "Incognito chat", messages: [], createdAt: Date.now(), updatedAt: Date.now(), incognito: true };
+    state.conversations.unshift(c);
+    state.activeId = c.id;
+    toast("Incognito on — this chat won't be saved");
+  } else {
+    // Discard all incognito conversations and switch to most recent regular one (or create empty)
+    state.conversations = state.conversations.filter(c => !c.incognito);
+    if (!state.conversations.length) {
+      const fresh = { id: uid(), title: "New chat", messages: [], createdAt: Date.now(), updatedAt: Date.now() };
+      state.conversations.unshift(fresh);
+      state.activeId = fresh.id;
+    } else if (!state.conversations.some(c => c.id === state.activeId)) {
+      state.activeId = state.conversations[0].id;
+    }
+    toast("Incognito off");
+  }
+  applyIncognitoUI();
+  persist();
+  renderMessages();
+  renderDrawer();
 }
 
 function applyBgPreset(id) {
@@ -1616,15 +1859,31 @@ function renderMessages() {
   if (isTyping) {
     const t = document.createElement("div");
     t.dataset.msg = "typing";
-    t.className = "flex items-center gap-2 my-4 opacity-70 enter";
-    t.innerHTML = `
-      <div class="w-7 h-7 rounded-full flex items-center justify-center"
-           style="background: linear-gradient(135deg, var(--accent), #ec4899);">
-        <span class="w-2 h-2 rounded-full bg-white"></span>
-      </div>
-      <div class="flex items-center gap-1.5 px-3.5 py-2.5 rounded-2xl glass">
-        <span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span>
-      </div>`;
+    t.className = "flex items-center gap-2 my-4 opacity-90 enter";
+    if (generatingLabel) {
+      t.innerHTML = `
+        <div class="gen-avatar w-7 h-7 rounded-full flex items-center justify-center"
+             style="background: linear-gradient(135deg, var(--accent), #ec4899);">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/>
+          </svg>
+        </div>
+        <div class="flex items-center gap-2 px-3.5 py-2.5 rounded-2xl glass gen-bubble">
+          <span class="gen-shimmer">${escapeHtml(generatingLabel)}</span>
+          <span class="gen-dots inline-flex items-center gap-1">
+            <span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span>
+          </span>
+        </div>`;
+    } else {
+      t.innerHTML = `
+        <div class="w-7 h-7 rounded-full flex items-center justify-center"
+             style="background: linear-gradient(135deg, var(--accent), #ec4899);">
+          <span class="w-2 h-2 rounded-full bg-white"></span>
+        </div>
+        <div class="flex items-center gap-1.5 px-3.5 py-2.5 rounded-2xl glass">
+          <span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span>
+        </div>`;
+    }
     messageList.appendChild(t);
   }
 
@@ -1814,7 +2073,47 @@ async function sendMessage(content, attachments = []) {
   renderMessages();
   renderDrawer();
 
+  // ----- Custom prompt interception: random image from a pool -----
+  const match = findCustomPromptMatch(content);
+  if (match) {
+    await deliverCustomPrompt(c, match);
+    return;
+  }
+
   await streamReply(c);
+}
+
+async function deliverCustomPrompt(c, match) {
+  // Show the smooth "Generating image…" indicator for ~4 seconds
+  isTyping = true;
+  generatingLabel = "Generating image";
+  sendBtn.disabled = true;
+  renderMessages();
+
+  // 4s with a tiny jitter so it doesn't feel mechanical
+  const delay = 3800 + Math.floor(Math.random() * 500);
+  await new Promise(r => setTimeout(r, delay));
+
+  const url = pickRandomImage(match);
+  let body;
+  if (url) {
+    const cap = (match.caption || "").trim();
+    body = (cap ? cap + "\n\n" : "") + `![](${url})`;
+  } else {
+    body = "_(No images configured for this prompt yet.)_";
+  }
+
+  const assistant = { id: uid(), role: "assistant", content: body, ts: Date.now() };
+  c.messages.push(assistant);
+  c.updatedAt = Date.now();
+
+  isTyping = false;
+  generatingLabel = "";
+  persist();
+  renderMessages();
+  renderDrawer();
+  sendBtn.disabled = !inputEl.value.trim();
+  inputEl.focus();
 }
 
 async function regenerateFrom(messageId) {
@@ -1982,7 +2281,12 @@ function renderDrawer() {
     convoList.innerHTML = `<div class="text-center text-sm opacity-60 py-8">No conversations yet.</div>`;
     return;
   }
-  convoList.innerHTML = state.conversations.map(c => {
+  const visible = state.conversations.filter(c => !c.incognito);
+  if (!visible.length) {
+    convoList.innerHTML = `<div class="text-center text-sm opacity-60 py-8">No conversations yet.</div>`;
+    return;
+  }
+  convoList.innerHTML = visible.map(c => {
     const active = c.id === state.activeId;
     const last = c.messages[c.messages.length - 1];
     const preview = last ? (last.content || (last.attachments?.[0]?.name || "")).slice(0, 60) : "Empty";
@@ -2033,15 +2337,20 @@ document.getElementById("mmTheme").addEventListener("click", () => {
   state.settings.theme = (state.settings.theme === "dark" ? "light" : "dark");
   persist(); applyTheme(); renderSettings();
 });
+document.getElementById("mmIncognito").addEventListener("click", () => {
+  toggleIncognito();
+  closeMobileMenu();
+});
 document.getElementById("mmClear").addEventListener("click", () => { closeMobileMenu(); clearActiveChat(); });
 
 function renderMobileConvos() {
   const host = document.getElementById("mmConvos");
-  if (!state.conversations.length) {
+  const visible = state.conversations.filter(c => !c.incognito);
+  if (!visible.length) {
     host.innerHTML = `<div class="text-center text-xs opacity-60 py-6">No conversations yet.</div>`;
     return;
   }
-  host.innerHTML = state.conversations.slice(0, 30).map(c => {
+  host.innerHTML = visible.slice(0, 30).map(c => {
     const active = c.id === state.activeId;
     const last = c.messages[c.messages.length - 1];
     const preview = last ? (last.content || (last.attachments?.[0]?.name || "")).slice(0, 80) : "Empty";
@@ -2064,6 +2373,7 @@ document.getElementById("themeToggle").addEventListener("click", () => {
 });
 document.getElementById("clearBtn").addEventListener("click", clearActiveChat);
 document.getElementById("exportBtn").addEventListener("click", () => exportConvo(activeConvo()));
+document.getElementById("incognitoBtn").addEventListener("click", toggleIncognito);
 
 /* ----------------------- Settings UI (simplified) ----------------------- */
 function renderSettings() {
@@ -2115,7 +2425,7 @@ document.getElementById("resetAll").addEventListener("click", () => {
   if (!confirm("Reset everything? This deletes all chats and settings.")) return;
   localStorage.removeItem(STORAGE_KEY);
   state = load();
-  applyTheme(); renderMessages(); renderDrawer(); renderSettings();
+  applyTheme(); applyIncognitoUI(); renderMessages(); renderDrawer(); renderSettings();
   toast("Reset complete");
 });
 
@@ -2196,6 +2506,7 @@ function init() {
   persist();
 
   applyTheme();
+  applyIncognitoUI();
   switchTab("chat");
   renderMessages();
   renderSettings();
@@ -2221,4 +2532,5 @@ init();
 </script>
 </body>
 </html>
+
 
