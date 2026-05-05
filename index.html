@@ -1612,14 +1612,14 @@
 
 <script>
 
-const GROQ_API_KEY = "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";
-const GROQ_BASE = "https://api.groq.com/openai/v1/chat/completions";
+const GROQ_API_KEY = "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";
+const GROQ_BASE = "https://openrouter.ai/api/v1/chat/completions";
 
 const MODELS = [
-  { id: "llama-3.3-70b-versatile",  name: "Llama 3.3 70B",    desc: "Best quality. Versatile & powerful." },
-  { id: "llama-3.1-8b-instant",     name: "Llama 3.1 8B",     desc: "Fastest. Great for quick tasks." },
-  { id: "mixtral-8x7b-32768",       name: "Mixtral 8x7B",     desc: "Long context. 32k token window." },
-  { id: "gemma2-9b-it",             name: "Gemma 2 9B",       desc: "Google's open model via Groq." },
+  { id: "meta-llama/llama-3.3-70b-instruct",  name: "Llama 3.3 70B",    desc: "Best quality. Versatile & powerful." },
+  { id: "meta-llama/llama-3.1-8b-instruct",   name: "Llama 3.1 8B",     desc: "Fastest. Great for quick tasks." },
+  { id: "mistralai/mixtral-8x7b-instruct-v0.1",    name: "Mixtral 8x7B",     desc: "Long context. 32k token window." },
+  { id: "google/gemma-2-9b-it",               name: "Gemma 2 9B",       desc: "Google's open model via OpenRouter." },
 ];
 
 const ACCENTS = [
@@ -1644,7 +1644,7 @@ const STORAGE_KEY = "glacier:v3";
 
 const DEFAULT_SETTINGS = {
   theme: "dark",
-  model: "llama-3.3-70b-versatile",
+  model: "meta-llama/llama-3.3-70b-instruct",
   userName: "",
   profile: { name: "You", pfp: "" }, // pfp = data URL or empty
   system: "You are Glacier, a thoughtful assistant. Keep replies clear, well-formatted (use markdown when helpful), and concise unless asked to elaborate.",
@@ -2724,7 +2724,7 @@ async function streamReply(c) {
   }
 
   const hasImage = c.messages.some(m => (m.attachments || []).some(a => a.kind === "image"));
-  const VISION_MODEL = "meta-llama/llama-4-scout-17b-16e-instruct";
+  const VISION_MODEL = "meta-llama/llama-4-scout";
   const model = hasImage ? VISION_MODEL : settings.model;
 
   const body = {
@@ -2747,6 +2747,8 @@ async function streamReply(c) {
       headers: {
         "Content-Type": "application/json",
         "Authorization": `Bearer ${GROQ_API_KEY}`,
+        "HTTP-Referer": "https://glacier.chat",
+        "X-Title": "Glacier Chat",
       },
       body: JSON.stringify(body),
     });
